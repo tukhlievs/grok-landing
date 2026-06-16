@@ -1,0 +1,110 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --accent: #67e8f9;
+}
+
+body {
+  font-feature-settings: "kern" "tnum" "ss01";
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Glassmorphism navbar */
+.glass {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Card styles inspired by shadcn */
+.card {
+  background: #0a0a0a;
+  border: 1px solid #1f2937;
+  transition: transform 0.2s cubic-bezier(0.23, 1, 0.32, 1), 
+              box-shadow 0.2s cubic-bezier(0.23, 1, 0.32, 1),
+              border-color 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  border-color: #374151;
+}
+
+/* Accent text and buttons */
+.accent-text {
+  color: var(--accent);
+}
+
+/* Three.js container */
+.three-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Section spacing */
+.section {
+  scroll-margin-top: 80px;
+}
+
+/* Custom button styles */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.2s cubic-bezier(0.23, 1.0, 0.32, 1);
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: white;
+  color: black;
+  padding: 12px 28px;
+  font-size: 15px;
+}
+
+.btn-primary:hover {
+  background: #f1f5f9;
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  border: 1px solid #374151;
+  color: white;
+  padding: 12px 28px;
+  font-size: 15px;
+  background: transparent;
+}
+
+.btn-outline:hover {
+  background: #111;
+  border-color: #4b5563;
+}
+
+/* Gallery image */
+.gallery-img {
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.card:hover .gallery-img {
+  transform: scale(1.03);
+}
+
+/* Scroll progress bar */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(to right, #67e8f9, #a5b4fc);
+  z-index: 100;
+  transition: width 0.1s ease-out;
+}

@@ -1,12 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
+  // Optimized for Vercel (no static export needed)
   images: {
-    unoptimized: true,
+    remotePatterns: [],
   },
-  basePath: '/grok-landing',
-  assetPrefix: '/grok-landing/',
-  trailingSlash: true,
 };
 
 export default nextConfig;

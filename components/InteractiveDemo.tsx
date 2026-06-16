@@ -2,8 +2,7 @@
 
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Stars } from "@react-three/drei";
-import { useScroll } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 
 interface SceneProps {
@@ -26,19 +25,16 @@ function Scene({ scrollProgress }: SceneProps) {
     if (torusRef.current) {
       torusRef.current.rotation.x = t * Math.PI * 2 + state.clock.elapsedTime * 0.3;
       torusRef.current.rotation.y = t * Math.PI * 1.2;
-      // Subtle scale pulse based on scroll
       const scale = 1 + Math.sin(t * Math.PI * 3) * 0.08;
       torusRef.current.scale.setScalar(scale);
     }
 
-    // Camera dolly based on scroll
     camera.position.z = 6 - t * 2.5;
     camera.lookAt(0, 0, 0);
   });
 
   return (
     <group ref={groupRef}>
-      {/* Central Torus Knot - represents complex frontend architecture */}
       <mesh ref={torusRef} position={[0, 0, 0]}>
         <torusKnotGeometry args={[1.8, 0.45, 180, 32, 2, 3]} />
         <meshPhongMaterial 
@@ -49,7 +45,6 @@ function Scene({ scrollProgress }: SceneProps) {
         />
       </mesh>
 
-      {/* Orbiting accent spheres */}
       {[ -3.5, 3.5 ].map((x, i) => (
         <mesh key={i} position={[x, Math.sin(i) * 1.5, 0]}>
           <sphereGeometry args={[0.6]} />
@@ -57,7 +52,6 @@ function Scene({ scrollProgress }: SceneProps) {
         </mesh>
       ))}
 
-      {/* Subtle wireframe sphere */}
       <mesh>
         <sphereGeometry args={[4.5]} />
         <meshBasicMaterial color="#ffffff" wireframe transparent opacity={0.06} />
@@ -72,40 +66,46 @@ function Scene({ scrollProgress }: SceneProps) {
 }
 
 export function InteractiveDemo() {
-  const { scrollYProgress } = useScroll({
-    target: { current: null }, // will be relative to viewport
-    offset: ["start end", "end start"],
-  });
+  const [progress, setProgress] = useState(0);
 
-  // We use a simple state approach for demo stability
-  // In production you could use the scrollProgress directly
-  const progressRef = useRef(0);
-
-  // Update progress on scroll (simplified for component)
-  if (typeof window !== "undefined") {
-    // This is a lightweight way; real implementation can use useTransform
-    window.addEventListener("scroll", () => {
+  useEffect(() => {
+    const handleScroll = () => {
       const section = document.getElementById("demo");
-      if (section) {
-        const rect = section.getBoundingClientRect();
-        const progress = Math.max(0, Math.min(1, (window.innerHeight - rect.top) / (rect.height + window.innerHeight)));
-        progressRef.current = progress;
+      if (!section) return;
+
+      const rect = section.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      const start = windowHeight * 0.15;
+      const end = windowHeight * 0.85;
+      const current = windowHeight - rect.top;
+      
+      let newProgress = 0;
+      if (current > start) {
+        newProgress = Math.min(1, (current - start) / (end - start));
       }
-    }, { passive: true });
-  }
+      
+      setProgress(Math.max(0, Math.min(1, newProgress)));
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <Canvas
       camera={{ position: [0, 0, 6], fov: 50 }}
       style={{ background: "#000" }}
-      gl={{ alpha: true, antialias: true, preserveDrawingBuffer: true }}
+      gl={{ alpha: true, antialias: true }}
     >
-      <Scene scrollProgress={progressRef.current} />
+      <Scene scrollProgress={progress} />
       <OrbitControls 
         enablePan={false} 
         enableZoom={true} 
-        minDistance={3} 
-        maxDistance={12}
+        minDistance={3.5} 
+        maxDistance={11}
         enableRotate={true}
       />
     </Canvas>
